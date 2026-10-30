@@ -24,6 +24,7 @@
 | 5 | minor | `frontend/src/question/candidate.ts` | 목록 기호로 시작한 윗줄이 아랫줄과 합쳐진다 | 이 PR | 수정됨(PR1) — `itemStart` 특징 |
 | 6 | minor | `frontend/src/question/controller.ts` | 오프라인일 때 「연결되면 물어볼게요」라고 하지만 자동으로 다시 보내지 않는다 | 리뷰 수정 PR | 열림 |
 | 7 | nit | `frontend/src/ui/PageSurface.tsx` | 「질문이 바뀜」 안내가 답 아래 오른쪽에 붙어 아래 필기와 겹칠 수 있다 | 리뷰 수정 PR | 열림 |
+| 8 | minor | 커밋 `5c658f5` `90f142d` `086ad65` `f5f80a4` `0e2d4c0` `17d4ea8` `22b6dbb` `6fa8039` `c211250` | 300줄 기준을 넘었는데 `90f142d` 말고는 커밋 본문에 이유를 적지 않았다(CLAUDE.md §5). `5c658f5`는 대부분 lockfile(예외)이고, 나머지는 파일 하나(`surface.ts`, `app.css`)이거나 서로 기대는 모듈 묶음이라 더 나누면 중간 커밋이 빌드되지 않는다 | 보류 | 보류 — 푸시한 기록은 다시 쓰지 않고 여기 남긴다. 다음 작업부터 본문에 이유를 적는다 |
 
 - 병합을 막는 문제(blocker)는 없다.
 
