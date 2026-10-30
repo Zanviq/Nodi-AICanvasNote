@@ -19,33 +19,27 @@
 
 ### 1.2 현재 단계
 
-- **설계·UI 시안 단계.** 제품 코드는 아직 없다.
-- GitHub 저장소는 아직 만들지 않았고 git도 초기화하지 않았다.
-- 저장소가 생기면 아래 초기 작업을 한 번만 한다.
-  1. `git init` 후 원격(GitHub)을 연결한다.
-  2. 현재 파일 전체로 `main`에 초기 커밋을 한 번 한다. **이것이 `main`에 직접 커밋하는 유일한 예외다.** 커밋 크기 기준(5절)도 이 커밋에는 적용하지 않고, 본문에 「초기 가져오기」라고 적는다.
-  3. `main`에서 `dev`를 만들고 둘 다 푸시한다.
-  4. 이후 모든 작업은 3절 브랜치 전략을 따른다.
+- **v0.1 개발 중.** 작업 브랜치 `feat/note-app-mvp` (작업 설계: `docs/work/feat/note-app-mvp/`).
+- 저장소: <https://github.com/Zanviq/Nodi-AICanvasNote> — `main`(배포), `dev`(통합).
+- 초기 작업(2026-10-31 완료): `git init` → `main` 초기 커밋 1회(「초기 가져오기」, `main` 직접 커밋의 유일한 예외) → `dev` 생성. 이후 모든 작업은 4절 브랜치 전략을 따른다.
 
 ---
 
 ## 2. 기술 스택 요약
 
-> 상태: **제안 (확정 전)** — 결정 로그 D-008. 확정되면 이 절을 갱신한다. 확정 전에는 스택을 바꾸는 작업을 시작하지 말고 먼저 묻는다.
+> 상태: **확정** — 결정 로그 D-017 (D-008을 대체). 스택을 바꾸려면 먼저 결정 로그에 새 결정을 올리고 묻는다.
 
 | Area | Stack |
 |------|-------|
-| Frontend | Next.js (App Router), React, TypeScript — 태블릿 브라우저용 PWA |
+| Frontend (`frontend/`) | Vite, React 18, TypeScript(strict) — 태블릿 브라우저용 SPA·PWA |
 | Ink (필기) | Canvas 2D, Pointer Events (`pressure`, `tiltX`/`tiltY`, `getCoalescedEvents`), perfect-freehand |
 | State | Zustand |
-| Styling | Tailwind CSS 4 + CSS 변수 디자인 토큰 |
-| Backend | Python, FastAPI (Nodi 재사용) |
-| Database | PostgreSQL |
-| AI — 손글씨 인식 | Gemini 비전 (Nodi와 같음) |
-| AI — 답변 | Upstage `solar-pro3` (Nodi와 같음) |
-| Testing | Vitest, Playwright, pytest |
-
-- 패키지 구조는 미정이다. `frontend/`, `backend/`로 나눌 예정이다.
+| Styling | 일반 CSS + CSS 변수 디자인 토큰 (`frontend/src/styles/tokens.css`), Tailwind 없음 |
+| Backend (`backend/`) | Python 3.12, FastAPI, uvicorn |
+| Database | SQLite (표준 `sqlite3`, Docker 볼륨) |
+| AI — 손글씨 인식·답변 | Gemini (`google-genai`), 모델은 `.env`의 `GEMINI_VISION_MODEL`·`GEMINI_ANSWER_MODEL` |
+| Testing | 프런트 Vitest, 백엔드 pytest |
+| Deploy | Docker Compose: `frontend`(nginx, 정적 파일 + `/api` 프록시), `backend`(uvicorn) |
 
 ---
 
@@ -218,14 +212,19 @@
 
 ## 9. 코드 규칙 요약
 
-> 코드가 아직 없다. 스택이 확정되고 첫 코드가 들어오면 이 절을 구체화한다.
-
 - TypeScript `strict`를 켠다. `any`는 이유를 주석으로 남길 때만 쓴다.
-- 필기 입력 경로(Pointer Events → 획 렌더링)는 지연이 가장 중요하다. 이 경로에서 무거운 동기 작업, 불필요한 React 재렌더링을 하지 않는다.
-- 손글씨 인식·답변 생성 같은 AI 호출은 백엔드를 거친다. 브라우저 코드에 API 키를 넣지 않는다.
-- 스타일은 디자인 토큰(CSS 변수 / Tailwind 테마)만 쓴다. (8절)
+- 필기 입력 경로(Pointer Events → 획 렌더링)는 지연이 가장 중요하다. 이 경로에서 무거운 동기 작업, React 상태 갱신·재렌더링을 하지 않는다. 획은 캔버스에 직접 그린다.
+- 손글씨 인식·답변 생성 같은 AI 호출은 백엔드를 거친다. 브라우저 코드에 API 키를 넣지 않는다. 사용자가 설정에서 넣은 키만 `X-Gemini-Key` 헤더로 보낸다(D-019).
+- 스타일은 디자인 토큰만 쓴다. 색은 `tokens.css`에만 값으로 두고, 캔버스 코드는 `src/design/tokens.ts`로 CSS 변수를 읽는다. 쪽 단위 수치(줄 간격 등)는 `src/design/tokens.ts`에만 둔다. (8절)
+- 저장 데이터에는 색 값 대신 펜 색 토큰 키(`blueblack` 등)를 저장한다.
+- 질문 알고리즘(`frontend/src/question/`)은 DOM에 의존하지 않는 순수 함수로 쓰고 단위 시험을 붙인다. 기준값은 설계 문서의 기호(`T_gap`, `τw` 등)와 같은 이름의 상수로 둔다.
 - 식별자는 영어, 주석은 한국어 또는 영어. 주변 코드의 스타일을 따른다.
-- 커밋 전 typecheck 필수, 가능하면 lint·test. (5절)
+- 커밋 전 검사 (5절)
+
+| Scope | Typecheck | Lint | Test |
+|-------|-----------|------|------|
+| `frontend/` | `npm run typecheck` | `npm run lint:tokens` | `npm test` |
+| `backend/` | `mypy app` | `ruff check .` | `pytest` |
 
 ---
 

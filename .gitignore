@@ -47,3 +47,9 @@ desktop.ini
 .idea/
 .vscode/*
 !.vscode/extensions.json
+
+# 로컬 실행 데이터 (SQLite)
+data/
+*.db
+*.db-shm
+*.db-wal

@@ -1,0 +1,153 @@
+/*
+ * 디자인 토큰 — 값은 이 파일에만 둔다 (DESIGN.md, 디자인 시스템 문서 §3).
+ * 시안 A(학교 괘선 노트). 화면 코드는 변수 이름만 쓴다.
+ */
+:root {
+  /* 색 */
+  --color-desk: #E4E2DC;
+  --color-tray: #D6D3CC;
+  --color-chrome-ink: #3B3A37;
+  --color-chrome-muted: #64615B;
+  --color-surface: #FFFFFF;
+  --color-paper: #FBFBF7;
+  --color-rule: #BCCCDD;
+  --color-rule-strong: #8FA6BE;
+  --color-margin: #E9B1AE;
+  --color-ink-ai: #5B3B24;
+  --color-ai-mark: #8C4A2F;
+  --color-highlight: #FFE45C;
+  --color-select: #A87400;
+  --color-graphite: #6E6C68;
+  --color-error: #A8322A;
+  --color-hole: #E4E2DC;
+  --color-hole-edge: rgba(0, 0, 0, 0.12);
+  --color-scrim: rgba(30, 28, 25, 0.32);
+  --color-hairline: rgba(0, 0, 0, 0.12);
+  --color-cover-1: #2F3E5C;
+  --color-cover-2: #6B3A2E;
+  --color-cover-3: #3F5446;
+  --color-cover-4: #5A4E6E;
+  --color-cover-label: #F4F1E8;
+  --color-cover-ink: #2E2C29;
+
+  /* 사용자 펜 색상표 — AI 잉크색은 넣지 않는다 (D-011) */
+  --pen-blueblack: #24315E;
+  --pen-black: #1F1F22;
+  --pen-red: #C2362B;
+  --pen-blue: #2F62C9;
+  --pen-graphite: #4A4946;
+  --pen-highlight-yellow: #F3DC6B;
+  --pen-highlight-pink: #F2A7C3;
+
+  /* 도구 그림 */
+  --tool-nib: #C9A35A;
+  --tool-nib-line: #7A5E26;
+  --tool-wood: #E6CBA3;
+  --tool-lead: #4A4A4A;
+  --tool-pencil-body: #5C6470;
+  --tool-pencil-face: #6D7682;
+  --tool-hl-tip: #E8C534;
+  --tool-hl-body: #F3DC6B;
+  --tool-eraser: #F5F4EF;
+  --tool-eraser-edge: #C9C6BE;
+  --tool-eraser-sleeve: #3E6FA8;
+
+  /* 종이 질감 */
+  --texture-paper: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .35  0 0 0 0 .33  0 0 0 0 .3  0 0 0 .07 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+
+  /* 글꼴 */
+  --font-ai: "Gowun Batang", "Nanum Myeongjo", serif;
+  --font-ui: "IBM Plex Sans KR", system-ui, -apple-system, sans-serif;
+  --font-hint: "Nanum Pen Script", cursive;
+
+  /* 종이 단위(pu) — src/design/tokens.ts의 PAGE와 같아야 한다 */
+  --page-width: 798px;
+  --row: 34px;
+  --page-head: 72px;
+  --margin-x: 96px;
+  --text-x: 112px;
+  --grid-cell: 20px;
+  --hole-x: 24px;
+  --hole-r: 6.5px;
+  --hole-r-edge: 7.6px;
+  --text-ai: calc(var(--row) * 0.485);
+
+  /* 글자 크기 */
+  --text-ui-xs: 11.5px;
+  --text-ui-sm: 13px;
+  --text-ui-md: 15px;
+  --text-ui-lg: 20px;
+  --text-ui-xl: 28px;
+  --text-hint: 25px;
+  --leading-tight: 1.3;
+  --leading-ui: 1.5;
+
+  /* 간격 */
+  --space-0: 2px;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+
+  /* 크기 */
+  --line-1: 1px;
+  --line-2: 1.5px;
+  --line-3: 2px;
+  --toolbar-h: 66px;
+  --hit-min: 44px;
+  --swatch: 18px;
+  --tray-h: 56px;
+  --pen-w: 30px;
+  --pen-h: 54px;
+  --pen-sink: 14px;
+  --pen-lift: 2px;
+  --icon: 22px;
+  --switch-w: 30px;
+  --switch-h: 18px;
+  --knob: 14px;
+  --cover-w: 168px;
+  --cover-h: 224px;
+  --tag-w: 300px;
+  --dialog-w: 440px;
+  --mark: 28px;
+  --mark-q: 24px;
+  --dot: 4px;
+
+  /* 모서리 */
+  --radius-xs: 3px;
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 14px;
+  --radius-pill: 12px;
+  --radius-round: 999px;
+
+  /* 그림자 */
+  --shadow-paper: 0 1px 1px rgba(0, 0, 0, 0.06), 0 10px 28px -14px rgba(0, 0, 0, 0.28);
+  --shadow-float: 0 1px 0 rgba(0, 0, 0, 0.05), 0 8px 22px -10px rgba(0, 0, 0, 0.35);
+  --shadow-tray: inset 0 3px 6px rgba(0, 0, 0, 0.16), inset 0 -1px 0 rgba(255, 255, 255, 0.6);
+  --shadow-pen: drop-shadow(0 2px 1.5px rgba(0, 0, 0, 0.22));
+  --shadow-cover: 0 2px 2px rgba(0, 0, 0, 0.12), 0 14px 26px -14px rgba(0, 0, 0, 0.45);
+
+  /* 움직임 */
+  --dur-fast: 120ms;
+  --dur-row: 150ms;
+  --dur-pen: 200ms;
+  --ease-paper: cubic-bezier(0.2, 0.7, 0.2, 1);
+
+  /* 겹침 순서 */
+  --z-ink: 2;
+  --z-marks: 3;
+  --z-bar: 10;
+  --z-dialog: 20;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --dur-fast: 0ms;
+    --dur-row: 0ms;
+    --dur-pen: 0ms;
+  }
+}

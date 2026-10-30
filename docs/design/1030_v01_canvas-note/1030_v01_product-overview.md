@@ -6,7 +6,7 @@
 | 작성자 | Claude (AI), 사용자 검토 대기 |
 | 설계 묶음 | v01 |
 | 상태 | 작성 중 |
-| 관련 결정 | D-001, D-002, D-003, D-006, D-008, D-012, D-015, D-016 |
+| 관련 결정 | D-001, D-002, D-003, D-006, D-012, D-015, D-016, D-017, D-018 |
 
 ## 1. 목적과 범위
 
@@ -114,32 +114,32 @@ interface FollowUpSlot { id: string; threadId: string; afterAnswerId: string; y:
 
 `color`, `x`, `y` 같은 값은 저장 데이터다. 화면 코드의 색·크기는 디자인 토큰만 쓴다(`CLAUDE.md` §8).
 
-### 3.8 시스템 구성 (D-008, 제안)
+### 3.8 시스템 구성 (D-017)
 
 ```text
-[태블릿 브라우저 PWA]
-  Next.js + React + TS
+[태블릿 브라우저 PWA — nginx가 정적 파일 제공]
+  Vite + React + TS
   필기 엔진: Canvas 2D + Pointer Events
   두 번 톡 판정·1단계 범위: 브라우저에서 (지연 때문)
         │  HTTPS (줄 이미지, 질문 문맥)       ▲ SSE (답 스트리밍)
         ▼                                      │
-[FastAPI 백엔드 (Nodi에서 축소)]
-  /recognize  → Gemini 비전 (줄 단위 텍스트)
-  /answer     → Upstage solar-pro3 (스트리밍)
+[FastAPI 백엔드]
+  /api/recognize  → Gemini (줄 단위 텍스트)
+  /api/answer     → Gemini (스트리밍)
   노트·쪽·획 저장, 연구 기록
         │
         ▼
-[PostgreSQL]
+[SQLite 파일 (Docker 볼륨)]
 ```
 
 - 범위 추정 2단계(경계 점수)는 인식 결과를 받은 뒤 브라우저에서 계산한다. 서버 왕복을 한 번 줄이고, 획 데이터가 이미 브라우저에 있기 때문이다.
-- API 키는 백엔드에만 둔다.
+- 키는 서버 `.env`가 우선이고, 없으면 설정 화면에서 넣은 키를 요청 헤더로 보낸다(D-019). 백엔드는 키를 저장·기록하지 않는다.
 
 ## 4. 대안과 선택 이유
 
 | 대안 | 장점 | 단점 | 판단 |
 |------|------|------|------|
-| 웹 PWA (제안) | iPad·갤럭시 탭 한 코드, Nodi 재사용, 배포 쉬움 | 네이티브보다 필기 지연이 크다 | 논문 일정과 재사용을 우선 |
+| 웹 SPA (선택, D-017) | iPad·갤럭시 탭 한 코드, 정적 파일이라 가볍고 배포 쉬움 | 네이티브보다 필기 지연이 크다 | 논문 일정과 가벼움을 우선 |
 | iPadOS 네이티브(PencilKit) | 필기감 최고, Pencil 제스처 사용 가능 | 갤럭시 탭 불가, 새로 짜야 함 | 필기감이 결정적으로 부족하면 재검토 |
 | Flutter | 두 플랫폼, 네이티브에 가까운 성능 | Nodi 재사용 불가, 팀 경험 | 보류 |
 
@@ -151,9 +151,9 @@ interface FollowUpSlot { id: string; threadId: string; afterAnswerId: string; y:
 
 ## 6. 남은 질문
 
-- 계정과 저장: 로그인이 필요한가(연구 참여자 구분), 노트를 서버에 저장하는가 기기에만 두는가.
-- D-015: 교과서·PDF를 근거로 쓰는 기능을 정말 빼도 되는가.
-- 기술 스택 확정(D-008): 웹 PWA로 가도 되는가.
+- 계정과 저장: 로그인 없이 서버 SQLite에 저장하기로 했다(D-018).
+- 교과서·PDF 근거 기능: v01에서 뺐다(D-015). v02 후보.
+- 기술 스택: D-017로 확정했다.
 - 내보내기(PDF)를 v01에 넣는가.
 - 연구 기록의 동의 절차와 보관 기간.
 
@@ -162,3 +162,4 @@ interface FollowUpSlot { id: string; threadId: string; afterAnswerId: string; y:
 | Date | Change | PR |
 |------|--------|----|
 | 2026-10-30 | 최초 작성 | 해당 없음 |
+| 2026-10-31 | 시스템 구성을 D-017·D-018·D-019에 맞춤 (Gemini 답변, Vite SPA, SQLite) | PR 전 |
