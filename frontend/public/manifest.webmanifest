@@ -1,0 +1,11 @@
+{
+  "name": "AI Canvas Note",
+  "short_name": "Canvas Note",
+  "lang": "ko",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#E4E2DC",
+  "theme_color": "#E4E2DC",
+  "icons": [{ "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }]
+}
