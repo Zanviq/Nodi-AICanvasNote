@@ -1,0 +1,288 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>시안 B 방안 연습장</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nanum+Pen+Script&family=Nanum+Gothic+Coding:wght@400;700&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* 시안 B 토큰 */
+:root{
+  --stage:#C9CCD0;
+  --stage-ink:#26282B;
+  --bezel:#1C1D1F;
+  --desk:#D7DADD;
+  --rail-hi:#E1E3E5;
+  --rail-lo:#C3C7CB;
+  --chrome-ink:#2F3236;
+  --chrome-muted:#5E636A;
+  --binding:#2C2D30;
+  --coil:#9DA1A6;
+  --paper:#FDFDFB;
+  --grid:#DCD5EE;
+  --grid-print:#A99DCB;
+  --ink-user:#202024;
+  --slip:#FFFEF7;
+  --slip-ink:#2B2A28;
+  --slip-label:#7A6F5E;
+  --tape:rgba(226,214,180,.78);
+  --redpencil:#C8442E;
+  --cell:20px;
+  --row:40px;
+  --hand:'Nanum Pen Script',cursive;
+  --ai:'Nanum Gothic Coding',monospace;
+  --ui:'IBM Plex Sans KR',system-ui,sans-serif;
+  --grain:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .3  0 0 0 0 .3  0 0 0 0 .32  0 0 0 .05 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{background:var(--stage);color:var(--stage-ink);font-family:var(--ui);display:flex;flex-direction:column;align-items:center;gap:18px;padding:20px 16px;overflow:hidden}
+body.embed{padding:8px;background:transparent}
+body.embed .cap{display:none}
+.cap{max-width:878px;width:100%;display:grid;grid-template-columns:auto 1fr;gap:4px 18px;align-items:baseline}
+.cap h1{font-size:20px;font-weight:600;letter-spacing:-.01em}
+.cap p{font-size:13.5px;line-height:1.55;color:#4C5055}
+.cap ul{grid-column:1/-1;list-style:none;display:flex;flex-wrap:wrap;gap:6px 18px;font-size:12.5px;color:#4C5055}
+.cap li b{font-weight:600;color:var(--stage-ink);margin-right:4px}
+
+.slot{position:relative;flex:none}
+.device{position:absolute;left:0;top:0;transform-origin:0 0;width:878px;height:1238px;border-radius:52px;background:var(--bezel);padding:22px;box-shadow:0 40px 70px -30px rgba(20,25,35,.55),inset 0 0 0 2px #3A3B3E}
+.screen{position:relative;width:834px;height:1194px;border-radius:32px;overflow:hidden;background:var(--desk)}
+.status{position:absolute;top:0;left:0;right:0;height:26px;display:flex;justify-content:space-between;align-items:center;padding:0 28px;font-size:12px;font-weight:600;color:var(--chrome-ink);z-index:3}
+
+/* 왼쪽 자 모양 도구 막대 */
+.rail{position:absolute;left:0;top:26px;bottom:0;width:72px;background:linear-gradient(90deg,var(--rail-hi),var(--rail-lo));box-shadow:1px 0 0 rgba(0,0,0,.12),4px 0 10px -6px rgba(0,0,0,.3);display:flex;flex-direction:column;align-items:flex-start;padding:10px 0 22px;color:var(--chrome-ink)}
+.rail::after{content:"";position:absolute;right:0;top:0;bottom:0;width:12px;background:repeating-linear-gradient(180deg,rgba(0,0,0,.35) 0 1px,transparent 1px 10px) right 0/6px 100% no-repeat,repeating-linear-gradient(180deg,rgba(0,0,0,.4) 0 1px,transparent 1px 50px) right 0/12px 100% no-repeat}
+.rail .ico{width:48px;height:40px;display:grid;place-items:center;margin-left:6px}
+.rail .ico svg{width:22px;height:22px}
+.tools{display:flex;flex-direction:column;gap:4px;margin:6px 0 10px}
+.tool{width:60px;height:26px;display:flex;align-items:center;transform:translateX(-14px);transition:transform .2s}
+.tool.on{transform:translateX(4px)}
+.tool svg{width:58px;height:20px;filter:drop-shadow(0 1.5px 1.2px rgba(0,0,0,.25))}
+.rsep{width:40px;height:1px;background:rgba(0,0,0,.15);margin:8px 0 8px 14px}
+.dots{display:flex;flex-direction:column;gap:10px;align-items:center;width:60px}
+.dot{width:18px;height:18px;border-radius:50%}
+.dot.on{box-shadow:0 0 0 2px var(--rail-hi),0 0 0 3.5px var(--chrome-ink)}
+.sizes{display:flex;flex-direction:column;gap:9px;align-items:center;width:60px}
+.sizes i{display:block;border-radius:50%;background:var(--chrome-ink);opacity:.35}
+.sizes i.on{opacity:1}
+.grow{flex:1}
+.qtoggle{width:60px;display:flex;flex-direction:column;align-items:center;gap:5px;font-size:10px;line-height:1.2;text-align:center;color:var(--chrome-ink)}
+.sw{width:18px;height:30px;border-radius:9px;background:var(--chrome-ink);position:relative}
+.sw::after{content:"";position:absolute;left:2px;top:2px;width:14px;height:14px;border-radius:50%;background:var(--rail-hi)}
+
+/* 위쪽 제본 연습장 */
+.pad{position:absolute;left:86px;top:44px;width:734px;bottom:-4px}
+.binding{position:absolute;left:0;right:0;top:0;height:52px;background:var(--binding);border-radius:4px 4px 0 0;display:flex;align-items:flex-end;padding-bottom:8px !important;justify-content:space-between;padding:0 22px;color:#E9E9EA;font-size:12px;letter-spacing:.02em;box-shadow:0 2px 0 rgba(0,0,0,.25)}
+.binding b{font-weight:600;font-size:13px}
+.binding span{opacity:.65}
+.paper{position:absolute;left:0;right:0;top:52px;bottom:0;background:var(--grain),linear-gradient(var(--grid) 1px,transparent 1px) 0 -1px/var(--cell) var(--cell),linear-gradient(90deg,var(--grid) 1px,transparent 1px) -1px 0/var(--cell) var(--cell),var(--paper);box-shadow:0 10px 28px -14px rgba(0,0,0,.3)}
+.perf{position:absolute;left:0;right:0;top:12px;height:0;border-top:1.5px dotted rgba(0,0,0,.18)}
+.coils{position:absolute;left:0;top:-14px;width:100%;height:44px;pointer-events:none}
+.print{position:absolute;right:22px;top:26px;font-size:10px;letter-spacing:.06em;color:var(--grid-print);display:flex;gap:22px}
+.print span{border-bottom:1px solid var(--grid-print);padding-bottom:2px;min-width:54px;position:relative}
+.print span.d{min-width:120px}
+.print b{position:absolute;left:36px;bottom:0;font-family:var(--hand);font-size:24px;font-weight:400;letter-spacing:0;color:var(--ink-user);white-space:nowrap;transform:rotate(-1deg)}
+
+.layer{position:absolute;inset:0;overflow:visible;pointer-events:none}
+.ln{position:absolute;left:40px;top:calc(var(--row) * var(--r));height:var(--row);line-height:var(--row);padding-top:4px;font-family:var(--hand);font-size:30px;color:var(--ink-user);white-space:nowrap;transform:rotate(var(--rot,0deg)) translateX(var(--dx,0px));transform-origin:0 50%}
+.ln.title{font-size:40px;padding-top:0}
+.ln sub{font-size:.6em;vertical-align:-.12em;line-height:0}
+
+.slip{position:absolute;left:62px;width:600px;background:var(--grain),var(--slip);padding:26px 22px 18px;box-shadow:0 1px 1.5px rgba(0,0,0,.14),0 8px 16px -10px rgba(0,0,0,.35);transform:rotate(var(--rot,0deg));clip-path:polygon(0 0,100% 0,100% calc(100% - 4px),97% 100%,93% calc(100% - 3px),88% 100%,82% calc(100% - 2px),76% 100%,70% calc(100% - 3px),63% 100%,57% calc(100% - 2px),50% 100%,44% calc(100% - 3px),37% 100%,30% calc(100% - 2px),23% 100%,16% calc(100% - 3px),9% 100%,4% calc(100% - 2px),0 100%)}
+.slip .lb{position:absolute;left:22px;top:8px;font-family:var(--ui);font-size:11px;font-weight:600;color:var(--slip-label)}
+.slip .bd{font-family:var(--ai);font-size:14.5px;line-height:24px;color:var(--slip-ink);word-break:keep-all}
+.slip .bd u{text-decoration:none;background:linear-gradient(transparent 82%,rgba(32,32,36,.8) 82%,rgba(32,32,36,.8) 90%,transparent 90%)}
+.slip.mine{background:var(--grain),linear-gradient(transparent 0 37px,var(--grid) 37px 38px,transparent 38px) 0 0/100% 38px,var(--slip);padding:8px 22px 10px}
+.slip.mine .hw{font-family:var(--hand);font-size:29px;line-height:38px;color:var(--ink-user);white-space:nowrap}
+.slip.open{background:var(--grain),linear-gradient(transparent 0 37px,var(--grid) 37px 38px,transparent 38px) 0 0/100% 38px,var(--slip);padding:8px 22px 10px;height:84px}
+.slip.open .hw{font-family:var(--hand);font-size:29px;line-height:38px;color:var(--ink-user);white-space:nowrap}
+.slip.open .ask{position:absolute;right:14px;bottom:12px;font-family:var(--ui);font-size:12px;font-weight:500;color:var(--chrome-ink);background:var(--desk);border-radius:12px;padding:4px 11px}
+.tape{position:absolute;width:76px;height:22px;background:var(--tape);transform:rotate(var(--t,-4deg));clip-path:polygon(3% 0,97% 4%,100% 22%,96% 50%,100% 78%,97% 100%,3% 96%,0 74%,4% 48%,0 20%);box-shadow:0 0 0 .5px rgba(0,0,0,.04)}
+
+.rp{position:absolute;font-family:var(--hand);font-size:24px;color:var(--redpencil)}
+
+.tag{position:absolute;left:446px;top:994px;width:280px;background:var(--slip);padding:9px 13px 10px;box-shadow:0 1px 1.5px rgba(0,0,0,.14),0 10px 22px -10px rgba(0,0,0,.4);transform:rotate(.8deg)}
+.tag .k{font-size:11px;font-weight:600;color:var(--slip-label)}
+.tag .v{font-family:var(--ai);font-size:13.5px;line-height:20px;color:var(--slip-ink);margin:3px 0 7px}
+.tag .s{display:flex;justify-content:space-between;font-size:11.5px;color:var(--chrome-ink)}
+.tag .s em{font-style:normal;color:var(--chrome-muted)}
+.pulse i{display:inline-block;width:4px;height:4px;border-radius:50%;background:var(--redpencil);margin-left:3px;animation:b 1.2s infinite}
+.pulse i:nth-child(2){animation-delay:.2s}.pulse i:nth-child(3){animation-delay:.4s}
+@keyframes b{0%,80%,100%{opacity:.25}40%{opacity:1}}
+@media (prefers-reduced-motion:reduce){.pulse i{animation:none;opacity:.7}}
+</style>
+</head>
+<body>
+<header class="cap">
+  <h1>시안 B. 방안 연습장</h1>
+  <p>위로 넘기는 스프링 연습장. 그래프와 풀이를 쓰기 좋은 모눈 위에, AI 답은 테이프로 붙인 인쇄 쪽지로 들어온다. 이어 질문도 빈 쪽지를 붙여 그 위에 쓴다.</p>
+  <ul>
+    <li><b>선택</b>빨간 색연필 동그라미</li>
+    <li><b>답</b>테이프로 붙인 타자 쪽지</li>
+    <li><b>이어 질문</b>빈 줄 쪽지</li>
+    <li><b>도구</b>왼쪽 자 모양 막대</li>
+  </ul>
+</header>
+
+<div class="slot" id="slot">
+<div class="device" id="device"><div class="screen">
+  <div class="status"><span>9:41</span><span>100%</span></div>
+
+  <aside class="rail">
+    <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></div>
+    <div class="tools">
+      <!-- 젤펜 (선택됨) -->
+      <div class="tool on" title="젤펜"><svg viewBox="0 0 58 20"><rect x="0" y="5" width="40" height="10" rx="3" fill="#2A2B2F"/><rect x="28" y="4" width="4" height="12" rx="1" fill="#55575C"/><path d="M40 6.5 L52 9 L56 10 L52 11 L40 13.5 Z" fill="#B9BBBF"/><circle cx="56" cy="10" r="1.3" fill="#202024"/></svg></div>
+      <div class="tool" title="연필"><svg viewBox="0 0 58 20"><rect x="0" y="5" width="42" height="10" fill="#E0B43C"/><rect x="0" y="9" width="42" height="2" fill="#C99A22"/><path d="M42 5 L54 10 L42 15 Z" fill="#EBCFA5"/><path d="M50 8.3 L54 10 L50 11.7 Z" fill="#3D3D3D"/></svg></div>
+      <div class="tool" title="형광펜"><svg viewBox="0 0 58 20"><rect x="0" y="3.5" width="40" height="13" rx="3" fill="#F2A7C3"/><rect x="34" y="3.5" width="6" height="13" fill="#E583A9"/><path d="M40 6 L50 7.5 L52 13 L40 14 Z" fill="#E583A9"/></svg></div>
+      <div class="tool" title="지우개"><svg viewBox="0 0 58 20"><rect x="0" y="4" width="32" height="12" rx="1.5" fill="#3B3F46"/><rect x="28" y="4.5" width="24" height="11" rx="2" fill="#F4F3EE" stroke="#C7C5BE"/></svg></div>
+    </div>
+    <div class="ico" title="올가미"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-dasharray="3 2.6" stroke-linecap="round"><ellipse cx="12" cy="10" rx="8" ry="6"/><path d="M8 15c-1 3 1 5 3 5" stroke-dasharray="none"/></svg></div>
+    <div class="rsep"></div>
+    <div class="dots">
+      <span class="dot on" style="background:var(--ink-user)"></span>
+      <span class="dot" style="background:#2350B8"></span>
+      <span class="dot" style="background:#B8312A"></span>
+      <span class="dot" style="background:#5B5F66"></span>
+    </div>
+    <div class="rsep"></div>
+    <div class="sizes"><i style="width:4px;height:4px"></i><i class="on" style="width:7px;height:7px"></i><i style="width:10px;height:10px"></i></div>
+    <div class="grow"></div>
+    <div class="qtoggle"><span class="sw"></span><span>두 번 톡<br>질문</span></div>
+    <div class="rsep"></div>
+    <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14L4 9l5-5"/><path d="M4 9h10a6 6 0 0 1 0 12h-3"/></svg></div>
+    <div class="ico" style="opacity:.4"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M15 14l5-5-5-5"/><path d="M20 9H10a6 6 0 0 0 0 12h3"/></svg></div>
+  </aside>
+
+  <div class="pad">
+    <div class="binding"><b>생명과학 연습장</b><span>8 / 40장</span></div>
+    <section class="paper" id="paper">
+      <div class="perf"></div>
+      <div class="print"><span>No.</span><span class="d">Date<b>10 / 30</b></span></div>
+      <svg class="layer" id="under"></svg>
+
+      <div class="ln title" style="--r:1;--rot:-.5deg">3단원  광합성</div>
+      <div class="ln" style="--r:3;--rot:.3deg">· 빛에너지 → 화학에너지(포도당)로 바꿔 저장</div>
+      <div class="ln" style="--r:4;--dx:20px;--rot:-.2deg">6CO<sub>2</sub> + 12H<sub>2</sub>O → C<sub>6</sub>H<sub>12</sub>O<sub>6</sub> + 6O<sub>2</sub> + 6H<sub>2</sub>O</div>
+      <div class="ln" style="--r:5;--rot:.4deg">① 명반응 : 틸라코이드 막, 빛 흡수</div>
+      <div class="ln" style="--r:6;--dx:28px;--rot:-.3deg">→ 물 분해(O<sub>2</sub> 발생), ATP·NADPH 생성</div>
+      <div class="ln" style="--r:7;--rot:.2deg">② 탄소 고정(캘빈 회로) : 스트로마</div>
+      <div class="ln" style="--r:8;--dx:28px;--rot:-.4deg">ATP·NADPH 써서 CO<sub>2</sub> → 포도당</div>
+
+      <div class="ln" style="--r:10;--rot:-.3deg" id="q1a">근데 캘빈 회로는 빛을 직접 안 쓰는데</div>
+      <div class="ln" style="--r:11;--rot:.2deg" id="q1b">왜 밤에는 멈추는 걸까?</div>
+
+      <div class="slip" style="top:492px;--rot:-.4deg">
+        <span class="lb">AI 답</span>
+        <p class="bd">캘빈 회로는 빛을 직접 쓰지 않지만, 명반응이 만든 <u>ATP와 NADPH</u>가 있어야 돌아가요. 밤에는 명반응이 멈춰 두 물질이 곧 바닥나므로 캘빈 회로도 함께 멈춥니다. 그래서 ‘암반응’보다 ‘탄소 고정 반응’이라는 이름이 더 정확해요.</p>
+      </div>
+      <div class="tape" style="left:330px;top:482px;--t:-3deg"></div>
+
+      <div class="slip mine" style="top:654px;--rot:.5deg;width:560px">
+        <div class="hw">그럼 밤에 식물은 에너지를 어디서 얻어?</div>
+      </div>
+      <div class="tape" style="left:40px;top:648px;--t:-38deg;width:52px"></div>
+
+      <div class="slip" style="top:722px;--rot:-.2deg">
+        <span class="lb">AI 답</span>
+        <p class="bd">낮에 만든 포도당을 녹말로 저장해 두었다가, 밤에 다시 분해해 세포 호흡으로 ATP를 얻어요. 세포 호흡은 빛과 상관없이 낮에도 밤에도 일어납니다.</p>
+      </div>
+      <div class="tape" style="left:420px;top:712px;--t:4deg"></div>
+
+      <div class="slip open" style="top:850px;--rot:.3deg;width:560px">
+        <div class="hw" id="writing">광합성이랑 호흡이 같이 일어나면</div>
+        <span class="ask">묻기</span>
+      </div>
+      <div class="tape" style="left:250px;top:842px;--t:-2deg;width:60px"></div>
+
+      <div class="ln" style="--r:24;--rot:-.2deg">· 광합성 속도 영향 : 빛의 세기, CO<sub>2</sub> 농도, 온도</div>
+      <div class="ln" style="--r:25;--rot:.35deg" id="q3">엽록소는 왜 <span id="tap">초록색</span>으로 보이는 걸까?</div>
+      <div class="tag">
+        <div class="k">읽은 문장</div>
+        <div class="v">엽록소는 왜 초록색으로 보이는 걸까?</div>
+        <div class="s"><span>답을 쓰는 중<span class="pulse"><i></i><i></i><i></i></span></span><em>취소</em></div>
+      </div>
+
+      <div class="rp" style="left:10px;top:404px">1</div>
+      <div class="rp" style="left:10px;top:660px">2</div>
+
+      <svg class="layer" id="ov"></svg>
+    </section>
+    <svg class="coils" id="coils"></svg>
+  </div>
+</div></div>
+</div>
+
+<script>
+const NS='http://www.w3.org/2000/svg';
+function el(tag,attrs,parent){const e=document.createElementNS(NS,tag);for(const k in attrs)e.setAttribute(k,attrs[k]);parent&&parent.appendChild(e);return e}
+function draw(){
+  const paper=document.getElementById('paper'), pr=paper.getBoundingClientRect(), s=pr.width/734;
+  const ov=document.getElementById('ov'), un=document.getElementById('under'), co=document.getElementById('coils');
+  ov.innerHTML='';un.innerHTML='';co.innerHTML='';
+  const css=getComputedStyle(document.documentElement), v=n=>css.getPropertyValue(n).trim();
+  const ink=v('--ink-user'), rp=v('--redpencil');
+  const box=id=>{const r=document.getElementById(id).getBoundingClientRect();return{x:(r.left-pr.left)/s,y:(r.top-pr.top)/s,w:r.width/s,h:r.height/s}};
+
+  // 스프링 고리
+  for(let x=26;x<734;x+=26){
+    el('rect',{x:x-4,y:30,width:8,height:8,rx:4,fill:'#1A1A1C',opacity:.85},co);
+    el('path',{d:`M${x} 34 C ${x-3} 20, ${x-1} 6, ${x+3} 2`,stroke:v('--coil'),'stroke-width':3,fill:'none','stroke-linecap':'round'},co);
+    el('path',{d:`M${x+.6} 30 C ${x-1.6} 20, ${x} 9, ${x+2.6} 4`,stroke:'#E4E6E9','stroke-width':.9,fill:'none','stroke-linecap':'round',opacity:.8},co);
+  }
+
+  // 제목 밑줄
+  el('path',{d:'M36 78 C 120 75, 220 77, 268 74',stroke:ink,'stroke-width':2,fill:'none','stroke-linecap':'round'},ov);
+
+  // 빛의 세기-광합성 속도 그래프 (모눈에 맞춰)
+  const gx=520, gy=320, g=el('g',{fill:'none',stroke:ink,'stroke-width':1.7,'stroke-linecap':'round','stroke-linejoin':'round'},ov);
+  el('path',{d:`M${gx} ${gy-170} L ${gx} ${gy} L ${gx+180} ${gy}`},g);
+  el('path',{d:`M${gx-5} ${gy-162} L ${gx} ${gy-172} L ${gx+5} ${gy-162} M ${gx+172} ${gy-5} L ${gx+182} ${gy} L ${gx+172} ${gy+5}`},g);
+  el('path',{d:`M${gx} ${gy-20} C ${gx+30} ${gy-90}, ${gx+60} ${gy-128}, ${gx+100} ${gy-134} L ${gx+170} ${gy-136}`,'stroke-width':2},g);
+  el('path',{d:`M${gx+100} ${gy-134} L ${gx+100} ${gy}`,'stroke-dasharray':'4 5','stroke-width':1.2},g);
+  const t=(x,y,str,sz=21,rot=0,fill=ink)=>{const e=el('text',{x,y,fill,'font-family':'Nanum Pen Script','font-size':sz,transform:`rotate(${rot} ${x} ${y})`},ov);e.textContent=str};
+  t(gx+128,gy-12,'빛의 세기',21,-1);
+  t(gx+8,gy-176,'광합성 속도',21,-1);
+  t(gx+76,gy+26,'광포화점',20,-1);
+
+  // 질문 1: 빨간 색연필 괄호와 이어진 실
+  const a=box('q1a'), b=box('q1b');
+  el('path',{d:`M30 ${a.y+6} Q 24 ${a.y+6}, 24 ${a.y+16} L 24 ${b.y+b.h-8} Q 24 ${b.y+b.h-2}, 30 ${b.y+b.h-2}`,stroke:rp,'stroke-width':1.8,fill:'none','stroke-linecap':'round',opacity:.85},ov);
+  el('path',{d:`M24 ${b.y+b.h+4} C 22 600, 26 760, 24 900`,stroke:rp,'stroke-width':1.3,fill:'none','stroke-linecap':'round','stroke-dasharray':'2 6',opacity:.7},ov);
+
+  // 지금 고른 문장: 빨간 색연필 고리
+  const q=box('q3');
+  const x0=q.x-12, x1=q.x+q.w+12, y0=q.y+4, y1=q.y+q.h+2, cy=(y0+y1)/2;
+  el('path',{d:`M${x0+30} ${y0-2} C ${x0-6} ${y0+2}, ${x0-8} ${y1+2}, ${x0+40} ${y1+3} L ${x1-30} ${y1+1} C ${x1+12} ${y1-2}, ${x1+10} ${y0-3}, ${x1-34} ${y0-4} L ${x0+10} ${y0-1}`,stroke:rp,'stroke-width':2.1,fill:'none','stroke-linecap':'round',opacity:.9},ov);
+  el('path',{d:`M${x1+4} ${cy} C ${x1+14} ${cy}, ${x1+18} ${cy+2}, 466 ${cy+10}`,stroke:rp,'stroke-width':1.4,fill:'none','stroke-linecap':'round',opacity:.8},ov);
+  const tp=document.getElementById('tap').getBoundingClientRect();
+  const tx=(tp.left-pr.left)/s+tp.width/s*.5, ty=(tp.top-pr.top)/s+tp.height/s*.62;
+  el('circle',{cx:tx,cy:ty,r:9,fill:'none',stroke:rp,'stroke-width':1.4,opacity:.5},ov);
+  el('circle',{cx:tx,cy:ty,r:16,fill:'none',stroke:rp,'stroke-width':1.1,opacity:.28},ov);
+
+  // 쪽지에 쓰는 중인 펜
+  const w=box('writing');
+  const px=w.x+w.w+4, py=w.y+w.h-8;
+  const p=el('g',{transform:`translate(${px} ${py}) rotate(32)`},ov);
+  el('ellipse',{cx:200,cy:28,rx:170,ry:8,fill:'rgba(0,0,0,.12)',filter:'blur(6px)'},p);
+  el('path',{d:'M0 0 L26 -6.5 L26 6.5 Z',fill:'#E9E8E4',stroke:'#B9B7B1','stroke-width':.8},p);
+  el('path',{d:'M0 0 L6 -1.6 L6 1.6 Z',fill:'#8E8C86'},p);
+  el('rect',{x:26,y:-7,width:380,height:14,rx:3,fill:'#F7F7F5',stroke:'#C9C7C1','stroke-width':.8},p);
+}
+function fit(){
+  const W=878,H=1238, cap=document.querySelector('.cap');
+  const capH=getComputedStyle(cap).display==='none'?0:cap.offsetHeight+18;
+  const pad=document.body.classList.contains('embed')?16:40;
+  const sc=Math.min((innerWidth-32)/W,(innerHeight-capH-pad)/H,1);
+  document.getElementById('device').style.transform=`scale(${sc})`;
+  const slot=document.getElementById('slot');slot.style.width=W*sc+'px';slot.style.height=H*sc+'px';
+  draw();
+}
+if(new URLSearchParams(location.search).has('embed'))document.body.classList.add('embed');
+document.fonts.ready.then(fit);addEventListener('resize',fit);fit();
+</script>
+</body>
+</html>

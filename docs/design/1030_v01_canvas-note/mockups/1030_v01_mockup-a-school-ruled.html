@@ -1,0 +1,316 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>시안 A 학교 괘선 노트</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nanum+Pen+Script&family=Gowun+Batang:wght@400;700&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* 시안 A 토큰: 화면 요소는 아래 변수 이름만 쓴다 */
+:root{
+  --stage:#D3D0C9;
+  --stage-ink:#2E2C29;
+  --bezel:#1C1D1F;
+  --desk:#E4E2DC;
+  --chrome-ink:#3B3A37;
+  --chrome-muted:#64615B;
+  --tray:#D6D3CC;
+  --paper:#FBFBF7;
+  --rule:#BCCCDD;
+  --rule-strong:#8FA6BE;
+  --margin:#E9B1AE;
+  --ink-user:#24315E;
+  --ink-ai:#5B3B24;
+  --stamp:#8C4A2F;
+  --highlight:#FFE45C;
+  --select:#A87400;
+  --graphite:#6E6C68;
+  --row:34px;
+  --row0:72px;
+  --hand:'Nanum Pen Script',cursive;
+  --ai:'Gowun Batang',serif;
+  --ui:'IBM Plex Sans KR',system-ui,sans-serif;
+  --grain:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .35  0 0 0 0 .33  0 0 0 0 .3  0 0 0 .07 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{background:var(--stage);color:var(--stage-ink);font-family:var(--ui);display:flex;flex-direction:column;align-items:center;gap:18px;padding:20px 16px;overflow:hidden}
+body.embed{padding:8px;background:transparent}
+body.embed .cap{display:none}
+
+.cap{max-width:878px;width:100%;display:grid;grid-template-columns:auto 1fr;gap:4px 18px;align-items:baseline}
+.cap h1{font-size:20px;font-weight:600;letter-spacing:-.01em}
+.cap p{font-size:13.5px;line-height:1.55;color:#55524C}
+.cap ul{grid-column:1/-1;list-style:none;display:flex;flex-wrap:wrap;gap:6px 18px;font-size:12.5px;color:#55524C}
+.cap li b{font-weight:600;color:var(--stage-ink);margin-right:4px}
+
+.slot{position:relative;flex:none}
+.device{position:absolute;left:0;top:0;transform-origin:0 0;width:878px;height:1238px;border-radius:52px;background:var(--bezel);padding:22px;box-shadow:0 40px 70px -30px rgba(40,30,20,.55),inset 0 0 0 2px #3A3B3E}
+.screen{position:relative;width:834px;height:1194px;border-radius:32px;overflow:hidden;background:var(--desk)}
+
+/* 상태 표시줄 */
+.status{position:absolute;top:0;left:0;right:0;height:26px;display:flex;justify-content:space-between;align-items:center;padding:0 28px;font-size:12px;font-weight:600;color:var(--chrome-ink)}
+
+/* 펜 트레이 도구 막대 */
+.bar{position:absolute;top:26px;left:0;right:0;height:66px;display:flex;align-items:center;gap:14px;padding:0 18px;color:var(--chrome-ink);font-size:13px}
+.back{display:flex;align-items:center;gap:6px;min-width:150px}
+.back svg{width:22px;height:22px}
+.back .t{display:flex;flex-direction:column;line-height:1.25}
+.back .t b{font-weight:600;font-size:14px}
+.back .t span{font-size:11.5px;color:var(--chrome-muted)}
+.tray{margin:0 auto;display:flex;align-items:flex-end;gap:2px;height:56px;padding:0 14px;border-radius:14px;background:var(--tray);box-shadow:inset 0 3px 6px rgba(0,0,0,.16),inset 0 -1px 0 rgba(255,255,255,.6)}
+.pen{width:30px;height:54px;display:flex;align-items:flex-end;justify-content:center;transform:translateY(14px);transition:transform .2s}
+.pen.on{transform:translateY(2px)}
+.pen svg{width:22px;height:54px;filter:drop-shadow(0 2px 1.5px rgba(0,0,0,.22))}
+.sep{width:1px;height:30px;background:rgba(0,0,0,.12);margin:0 8px;align-self:center}
+.inks{display:flex;gap:9px;align-items:center;align-self:center}
+.ink{width:18px;height:18px;border-radius:50%}
+.ink.on{box-shadow:0 0 0 2px var(--tray),0 0 0 3.5px var(--chrome-ink)}
+.sizes{display:flex;gap:9px;align-items:center;align-self:center}
+.sizes i{display:block;border-radius:50%;background:var(--chrome-ink);opacity:.35}
+.sizes i.on{opacity:1}
+.lasso{align-self:center;width:30px;height:30px;display:grid;place-items:center}
+.right{display:flex;align-items:center;gap:14px;min-width:150px;justify-content:flex-end}
+.right svg{width:22px;height:22px}
+.toggle{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--chrome-ink)}
+.sw{width:30px;height:18px;border-radius:9px;background:var(--chrome-ink);position:relative}
+.sw::after{content:"";position:absolute;right:2px;top:2px;width:14px;height:14px;border-radius:50%;background:var(--desk)}
+
+/* 종이 */
+.paper{position:absolute;left:18px;top:98px;width:798px;height:1120px;background:var(--grain),var(--paper);border-radius:3px 3px 0 0;box-shadow:0 1px 1px rgba(0,0,0,.06),0 10px 28px -14px rgba(0,0,0,.28)}
+.rules{position:absolute;left:0;right:0;top:var(--row0);bottom:0;background:repeating-linear-gradient(180deg,transparent 0 calc(var(--row) - 1px),var(--rule) calc(var(--row) - 1px) var(--row));border-top:2px solid var(--rule-strong);margin-top:-2px}
+.mline{position:absolute;left:96px;top:0;bottom:0;width:1.5px;background:var(--margin)}
+.holes{position:absolute;left:0;top:var(--row0);bottom:0;width:48px;background:radial-gradient(circle at 24px 17px,var(--desk) 0 6.5px,rgba(0,0,0,.12) 7px,transparent 7.6px) 0 0/48px var(--row) repeat-y}
+.head{position:absolute;right:34px;top:30px;display:flex;gap:26px;font-size:10.5px;letter-spacing:.04em;color:var(--rule-strong)}
+.head span{position:relative;display:inline-block;border-bottom:1px solid var(--rule);padding:0 0 3px;min-width:60px}
+.head span.d{min-width:150px}
+.head b{position:absolute;left:40px;bottom:1px;font-family:var(--hand);font-size:24px;font-weight:400;letter-spacing:0;color:var(--ink-user);white-space:nowrap;transform:rotate(-1.5deg)}
+.ln sub{font-size:.6em;vertical-align:-.12em;line-height:0}
+
+.layer{position:absolute;inset:0;overflow:visible;pointer-events:none}
+.hl-layer{mix-blend-mode:multiply}
+
+.ln{position:absolute;left:112px;top:calc(var(--row0) + var(--row) * (var(--r) - 1));height:var(--row);padding-top:3px;line-height:var(--row);font-family:var(--hand);font-size:30px;color:var(--ink-user);white-space:nowrap;transform:rotate(var(--rot,0deg)) translateX(var(--dx,0px));transform-origin:0 50%}
+.ln.title{font-size:40px;padding-top:0}
+.ln.small{font-size:22px}
+
+.ans{position:absolute;left:112px;width:652px;top:calc(var(--row0) + var(--row) * (var(--r) - 1));padding-top:4px;font-family:var(--ai);font-size:16.5px;line-height:var(--row);color:var(--ink-ai);letter-spacing:-.005em;word-break:keep-all}
+.ans .mark{background:linear-gradient(transparent 76%,rgba(36,49,94,.75) 76%,rgba(36,49,94,.75) 84%,transparent 84%)}
+
+.mk{position:absolute;left:58px;width:28px;height:28px;top:calc(var(--row0) + var(--row) * (var(--r) - 1) + 3px);display:grid;place-items:center;border-radius:50%;background:var(--paper)}
+.mk.q{border:1.4px solid var(--graphite);color:var(--graphite);font-family:var(--hand);font-size:20px;line-height:1}
+.mk.a{border:1.6px solid var(--stamp);color:var(--stamp);font-family:var(--ai);font-weight:700;font-size:12.5px;transform:rotate(-9deg);-webkit-mask:var(--grain),linear-gradient(#000,#000);opacity:.88}
+
+.slotbox{position:absolute;left:106px;width:662px;top:calc(var(--row0) + var(--row) * 17 + 2px);height:calc(var(--row) * 2 - 4px);border-radius:8px}
+.slotbox .ph{position:absolute;left:14px;top:4px;font-family:var(--hand);font-size:25px;color:var(--graphite);opacity:.55}
+.slotbox .ask{position:absolute;right:10px;bottom:9px;font-size:12px;font-weight:500;color:var(--chrome-ink);background:var(--desk);border-radius:12px;padding:4px 11px}
+
+.tag{position:absolute;left:478px;top:calc(var(--row0) + var(--row) * 21 + 2px);width:300px;background:#FFFFFF;border-radius:6px;padding:10px 14px 11px;box-shadow:0 1px 0 rgba(0,0,0,.05),0 8px 22px -10px rgba(0,0,0,.35);transform:rotate(-.6deg)}
+.tag::before{content:"";position:absolute;left:-6px;top:12px;width:12px;height:12px;background:#FFFFFF;transform:rotate(45deg);border-radius:2px}
+.tag .k{font-size:11.5px;color:var(--chrome-muted)}
+.tag .v{font-family:var(--ai);font-size:15px;color:var(--ink-ai);margin:3px 0 8px}
+.tag .s{display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--chrome-ink)}
+.tag .s em{font-style:normal;color:var(--chrome-muted)}
+.dots i{display:inline-block;width:4px;height:4px;border-radius:50%;background:var(--select);margin-left:3px;animation:b 1.2s infinite}
+.dots i:nth-child(2){animation-delay:.2s}.dots i:nth-child(3){animation-delay:.4s}
+@keyframes b{0%,80%,100%{opacity:.25}40%{opacity:1}}
+@media (prefers-reduced-motion:reduce){.dots i{animation:none;opacity:.7}}
+</style>
+</head>
+<body>
+<header class="cap">
+  <h1>시안 A. 학교 괘선 노트</h1>
+  <p>가장 익숙한 줄노트. AI 답은 같은 줄 위에 갈색 인쇄체로 끼워 넣어 내 글씨와 섞이지 않게 하고, 여백의 연필선이 질문과 답을 잇는다.</p>
+  <ul>
+    <li><b>선택</b>형광펜 띠와 손잡이</li>
+    <li><b>답</b>줄 위 인쇄체, 여백에 「답」 도장</li>
+    <li><b>이어 질문</b>점선 칸</li>
+    <li><b>도구</b>위쪽 펜 트레이</li>
+  </ul>
+</header>
+
+<div class="slot" id="slot">
+<div class="device" id="device"><div class="screen">
+
+  <div class="status"><span>9:41</span><span>100%</span></div>
+
+  <nav class="bar">
+    <div class="back">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>
+      <div class="t"><b>생명과학 노트</b><span>12쪽</span></div>
+    </div>
+
+    <div class="tray">
+      <!-- 만년필 (선택됨) -->
+      <div class="pen on" title="만년필"><svg viewBox="0 0 22 54"><path d="M11 2 L6.5 15 H15.5 Z" fill="#C9A35A"/><path d="M11 6 V13" stroke="#7A5E26" stroke-width=".8"/><rect x="6" y="15" width="10" height="39" rx="2.5" fill="var(--ink-user)"/><rect x="6" y="22" width="10" height="2" fill="#C9A35A"/></svg></div>
+      <!-- 연필 -->
+      <div class="pen" title="연필"><svg viewBox="0 0 22 54"><path d="M11 3 L6.5 16 H15.5 Z" fill="#E6CBA3"/><path d="M11 3 L9.4 7.6 H12.6 Z" fill="#4A4A4A"/><rect x="6.5" y="16" width="9" height="38" fill="#5C6470"/><rect x="9.5" y="16" width="3" height="38" fill="#6D7682"/></svg></div>
+      <!-- 형광펜 -->
+      <div class="pen" title="형광펜"><svg viewBox="0 0 22 54"><path d="M8 6 L15 9 L16 18 H6 Z" fill="#E8C534"/><rect x="5" y="18" width="12" height="36" rx="3" fill="#F3DC6B"/><rect x="5" y="18" width="12" height="5" fill="#E8C534"/></svg></div>
+      <!-- 지우개 -->
+      <div class="pen" title="지우개"><svg viewBox="0 0 22 54"><rect x="5.5" y="6" width="11" height="22" rx="2" fill="#F5F4EF" stroke="#C9C6BE"/><rect x="5" y="24" width="12" height="30" rx="1.5" fill="#3E6FA8"/></svg></div>
+      <div class="sep"></div>
+      <div class="lasso" title="올가미"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--chrome-ink)" stroke-width="1.6" stroke-dasharray="3 2.6" stroke-linecap="round"><ellipse cx="12" cy="10" rx="8" ry="6"/><path d="M8 15c-1 3 1 5 3 5" stroke-dasharray="none"/></svg></div>
+      <div class="sep"></div>
+      <div class="inks">
+        <span class="ink on" style="background:var(--ink-user)"></span>
+        <span class="ink" style="background:#1F1F22"></span>
+        <span class="ink" style="background:#C2362B"></span>
+        <span class="ink" style="background:#2F62C9"></span>
+      </div>
+      <div class="sep"></div>
+      <div class="sizes"><i style="width:4px;height:4px"></i><i class="on" style="width:7px;height:7px"></i><i style="width:10px;height:10px"></i></div>
+    </div>
+
+    <div class="right">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14L4 9l5-5"/><path d="M4 9h10a6 6 0 0 1 0 12h-3"/></svg>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" opacity=".4"><path d="M15 14l5-5-5-5"/><path d="M20 9H10a6 6 0 0 0 0 12h3"/></svg>
+      <div class="toggle"><span>두 번 톡 질문</span><span class="sw"></span></div>
+      <svg viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/></svg>
+    </div>
+  </nav>
+
+  <section class="paper" id="paper">
+    <div class="rules"></div>
+    <div class="holes"></div>
+    <div class="mline"></div>
+    <div class="head"><span>No.</span><span class="d">Date<b>10 . 30 (목)</b></span></div>
+
+    <svg class="layer hl-layer" id="hl"></svg>
+
+    <!-- 필기 -->
+    <div class="ln title" style="--r:1;--rot:-.6deg">3단원  광합성</div>
+    <div class="ln" style="--r:3;--rot:.3deg">· 빛에너지 → 화학에너지(포도당)로 바꿔 저장</div>
+    <div class="ln" style="--r:4;--dx:22px;--rot:-.2deg">6CO<sub>2</sub> + 12H<sub>2</sub>O → C<sub>6</sub>H<sub>12</sub>O<sub>6</sub> + 6O<sub>2</sub> + 6H<sub>2</sub>O</div>
+    <div class="ln" style="--r:5;--rot:.4deg">① 명반응 : 틸라코이드 막, 빛 흡수</div>
+    <div class="ln" style="--r:6;--dx:30px;--rot:-.3deg">→ 물 분해(O<sub>2</sub> 발생), ATP·NADPH 생성</div>
+    <div class="ln" style="--r:7;--rot:.2deg">② 탄소 고정(캘빈 회로) : 스트로마</div>
+    <div class="ln" style="--r:8;--dx:30px;--rot:-.4deg">ATP·NADPH 써서 CO<sub>2</sub> → 포도당</div>
+
+    <!-- 질문 1 (답 받음) -->
+    <div class="ln" style="--r:10;--rot:-.3deg" data-hl="done">근데 캘빈 회로는 빛을 직접 안 쓰는데</div>
+    <div class="ln" style="--r:11;--rot:.2deg" data-hl="done">왜 밤에는 멈추는 걸까?</div>
+    <div class="ans" style="--r:12">캘빈 회로는 빛을 직접 쓰지 않지만, 명반응이 만든 <span class="mark">ATP와 NADPH</span>가 있어야 돌아가요. 밤에는 명반응이 멈춰 두 물질이 곧 바닥나므로 캘빈 회로도 함께 멈춥니다. 그래서 ‘암반응’보다 ‘탄소 고정 반응’이라는 이름이 더 정확해요.</div>
+
+    <!-- 이어 질문 2 (답 받음) -->
+    <div class="ln" style="--r:15;--rot:.3deg" data-hl="done">그럼 밤에 식물은 에너지를 어디서 얻어?</div>
+    <div class="ans" style="--r:16">낮에 만든 포도당을 녹말로 저장해 두었다가, 밤에 다시 분해해 세포 호흡으로 ATP를 얻어요. 세포 호흡은 빛과 상관없이 낮에도 밤에도 일어납니다.</div>
+
+    <!-- 이어 질문 칸 (열림) -->
+    <div class="slotbox" id="slotbox"><span class="ph">이어서 궁금한 걸 여기에 써 보세요</span><span class="ask">묻기</span></div>
+
+    <!-- 일반 필기 + 지금 고른 문장 -->
+    <div class="ln" style="--r:21;--rot:-.2deg">· 광합성 속도에 영향 : 빛의 세기, CO<sub>2</sub> 농도, 온도</div>
+    <div class="ln" style="--r:22;--rot:.35deg" data-hl="active" id="q3">엽록소는 왜 <span id="tap">초록색</span>으로 보이는 걸까?</div>
+    <div class="tag">
+      <div class="k">읽은 문장</div>
+      <div class="v">엽록소는 왜 초록색으로 보이는 걸까?</div>
+      <div class="s"><span>답을 쓰는 중<span class="dots"><i></i><i></i><i></i></span></span><em>취소</em></div>
+    </div>
+
+    <!-- 여백 표시 -->
+    <div class="mk q" style="--r:10">1</div>
+    <div class="mk a" style="--r:12">답</div>
+    <div class="mk q" style="--r:15">2</div>
+    <div class="mk a" style="--r:16">답</div>
+
+    <svg class="layer" id="ov"></svg>
+  </section>
+
+</div></div>
+</div>
+
+<script>
+const NS='http://www.w3.org/2000/svg';
+const ROW=34, ROW0=72;
+const rowTop=r=>ROW0+ROW*(r-1);
+function el(tag,attrs,parent){const e=document.createElementNS(NS,tag);for(const k in attrs)e.setAttribute(k,attrs[k]);parent&&parent.appendChild(e);return e}
+
+function draw(){
+  const paper=document.getElementById('paper');
+  const pr=paper.getBoundingClientRect();
+  const s=pr.width/798;
+  const hl=document.getElementById('hl'), ov=document.getElementById('ov');
+  hl.innerHTML='';ov.innerHTML='';
+  const css=getComputedStyle(document.documentElement);
+  const v=n=>css.getPropertyValue(n).trim();
+
+  // 형광펜 띠: 실제 글자 폭에 맞춰 그린다
+  let active=[];
+  document.querySelectorAll('[data-hl]').forEach(n=>{
+    const r=n.getBoundingClientRect();
+    const x=(r.left-pr.left)/s-6, w=r.width/s+12;
+    const top=Math.round(((r.top-pr.top)/s-ROW0)/ROW)*ROW+ROW0;
+    const y=top+7, h=ROW-9;
+    const on=n.dataset.hl==='active';
+    el('path',{d:`M${x+3} ${y+1} L${x+w} ${y-1} L${x+w-2} ${y+h} L${x} ${y+h+1} Z`,fill:v('--highlight'),opacity:on?.8:.32},hl);
+    if(on)active.push({x,y,w,h});
+  });
+
+  // 선택 손잡이
+  active.forEach(a=>{
+    const c=v('--select');
+    el('line',{x1:a.x,y1:a.y-4,x2:a.x,y2:a.y+a.h+3,stroke:c,'stroke-width':2},ov);
+    el('circle',{cx:a.x,cy:a.y-6,r:4.5,fill:c},ov);
+    el('line',{x1:a.x+a.w,y1:a.y-4,x2:a.x+a.w,y2:a.y+a.h+3,stroke:c,'stroke-width':2},ov);
+    el('circle',{cx:a.x+a.w,cy:a.y+a.h+5,r:4.5,fill:c},ov);
+  });
+
+  const ink=v('--ink-user'), gr=v('--graphite');
+
+  // 제목 밑줄 두 번
+  el('path',{d:'M110 102 C 200 99, 300 101, 330 98',stroke:ink,'stroke-width':2,fill:'none','stroke-linecap':'round'},ov);
+  el('path',{d:'M116 107 C 210 104, 290 106, 318 104',stroke:ink,'stroke-width':1.6,fill:'none','stroke-linecap':'round',opacity:.9},ov);
+
+  // 엽록체 그림
+  const g=el('g',{fill:'none',stroke:ink,'stroke-width':1.7,'stroke-linecap':'round','stroke-linejoin':'round',transform:'translate(690 262) rotate(-8)'},ov);
+  el('path',{d:'M-88 2 C -86 -40, -30 -56, 10 -54 C 60 -52, 92 -26, 90 6 C 88 40, 40 56, -6 54 C -56 52, -90 36, -88 2 Z'},g);
+  el('path',{d:'M-78 3 C -76 -32, -28 -46, 8 -45 C 52 -44, 80 -22, 79 6 C 78 34, 36 46, -6 45 C -50 44, -79 31, -78 3 Z','stroke-width':1.2},g);
+  [[-48,-6],[-14,10],[22,-10],[52,8]].forEach(([cx,cy])=>{
+    for(let i=0;i<4;i++)el('rect',{x:cx-11,y:cy-14+i*7,width:22,height:5,rx:2.5,'stroke-width':1.3},g);
+  });
+  el('path',{d:'M-37 -2 L -25 12 M -3 12 L 11 -6 M 33 -6 L 41 10','stroke-width':1.1},g);
+  const lab=(x,y,t,rot)=>{const e=el('text',{x,y,fill:ink,'font-family':'Nanum Pen Script','font-size':22,transform:`rotate(${rot} ${x} ${y})`},ov);e.textContent=t};
+  el('path',{d:'M708 236 C 704 220, 700 206, 694 196',stroke:ink,'stroke-width':1.1,fill:'none'},ov);
+  lab(640,190,'틸라코이드',-3);
+  el('path',{d:'M662 300 C 654 316, 646 328, 640 338',stroke:ink,'stroke-width':1.1,fill:'none'},ov);
+  lab(588,358,'스트로마',-2);
+
+  // 질문-답 실: 여백 연필선
+  const yTop=rowTop(10)+17, yEnd=rowTop(18)+ROW;
+  el('path',{d:`M72 ${yTop} C 71 ${yTop+80}, 73 ${yTop+180}, 72 ${yEnd-16} Q 72 ${yEnd}, 100 ${yEnd-2}`,stroke:gr,'stroke-width':1.3,fill:'none',opacity:.7,'stroke-linecap':'round'},ov);
+  // 점선 이어 질문 칸
+  const sb=document.getElementById('slotbox').getBoundingClientRect();
+  el('rect',{x:(sb.left-pr.left)/s,y:(sb.top-pr.top)/s,width:sb.width/s,height:sb.height/s,rx:8,fill:'none',stroke:gr,'stroke-width':1.4,'stroke-dasharray':'6 5',opacity:.75},ov);
+  ov.appendChild(ov.querySelector('path:last-of-type'));
+
+  // 두 번 톡 위치와 펜
+  const t=document.getElementById('tap').getBoundingClientRect();
+  const tx=(t.left-pr.left)/s+t.width/s*.55, ty=(t.top-pr.top)/s+t.height/s*.62;
+  el('circle',{cx:tx,cy:ty,r:9,fill:'none',stroke:v('--select'),'stroke-width':1.5,opacity:.55},ov);
+  el('circle',{cx:tx,cy:ty,r:17,fill:'none',stroke:v('--select'),'stroke-width':1.2,opacity:.3},ov);
+  const p=el('g',{transform:`translate(${tx} ${ty}) rotate(38)`},ov);
+  el('ellipse',{cx:220,cy:30,rx:190,ry:9,fill:'rgba(0,0,0,.12)',filter:'blur(6px)'},p);
+  el('path',{d:'M0 0 L30 -7.5 L30 7.5 Z',fill:'#E9E8E4',stroke:'#B9B7B1','stroke-width':.8},p);
+  el('path',{d:'M0 0 L7 -1.8 L7 1.8 Z',fill:'#8E8C86'},p);
+  el('rect',{x:30,y:-8,width:420,height:16,rx:3,fill:'#F7F7F5',stroke:'#C9C7C1','stroke-width':.8},p);
+  el('rect',{x:30,y:-8,width:420,height:4,rx:2,fill:'#FFFFFF',opacity:.9},p);
+}
+
+function fit(){
+  const W=878,H=1238;
+  const cap=document.querySelector('.cap');
+  const capH=getComputedStyle(cap).display==='none'?0:cap.offsetHeight+18;
+  const pad=document.body.classList.contains('embed')?16:40;
+  const sc=Math.min((innerWidth-32)/W,(innerHeight-capH-pad)/H,1);
+  document.getElementById('device').style.transform=`scale(${sc})`;
+  const slot=document.getElementById('slot');slot.style.width=W*sc+'px';slot.style.height=H*sc+'px';
+  draw();
+}
+if(new URLSearchParams(location.search).has('embed'))document.body.classList.add('embed');
+document.fonts.ready.then(fit);addEventListener('resize',fit);fit();
+</script>
+</body>
+</html>
