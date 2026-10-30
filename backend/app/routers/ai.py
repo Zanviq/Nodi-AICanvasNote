@@ -22,10 +22,12 @@ NO_KEY = {
     ),
 }
 MAX_IMAGE_BYTES = 6 * 1024 * 1024
+# base64는 4/3배로 커진다. 디코딩 전에 길이로 먼저 자른다.
+MAX_IMAGE_CHARS = MAX_IMAGE_BYTES * 4 // 3 + 256
 
 
 class RecognizeRequest(BaseModel):
-    image: str = Field(min_length=1)
+    image: str = Field(min_length=1, max_length=MAX_IMAGE_CHARS)
     lineCount: int = Field(ge=1, le=40)
 
 

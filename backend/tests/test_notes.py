@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import pytest
 from fastapi.testclient import TestClient
 
 
@@ -101,3 +102,15 @@ def test_events(client: TestClient) -> None:
     }
     res = client.post("/api/events", json=body)
     assert res.json() == {"saved": 2}
+
+
+def test_access_token_locks_api(client: TestClient, monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setenv("APP_ACCESS_TOKEN", "s3cret")
+    assert client.get("/api/health").status_code == 200
+    assert client.get("/api/config").json()["accessRequired"] is True
+    denied = client.get("/api/notebooks")
+    assert denied.status_code == 401
+    assert denied.json()["detail"]["code"] == "access"
+    assert client.get("/api/notebooks", headers={"X-Access-Token": "wrong"}).status_code == 401
+    assert client.get("/api/notebooks", headers={"X-Access-Token": "s3cret"}).status_code == 200
+    assert client.post("/api/answer", json={"question": "q"}).status_code == 401

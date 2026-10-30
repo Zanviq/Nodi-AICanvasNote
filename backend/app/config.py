@@ -15,6 +15,7 @@ class Settings:
     thinking_level: str
     database_path: str
     cors_origins: tuple[str, ...]
+    access_token: str
 
 
 def _env(name: str, default: str) -> str:
@@ -32,4 +33,5 @@ def get_settings() -> Settings:
         thinking_level=_env("GEMINI_THINKING_LEVEL", "low"),
         database_path=_env("DATABASE_PATH", "") or "./data/note.db",
         cors_origins=cors or DEFAULT_CORS,
+        access_token=_env("APP_ACCESS_TOKEN", ""),
     )
