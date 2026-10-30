@@ -175,7 +175,7 @@ export class Surface {
     if (e.pointerType === "mouse" && e.button !== 0) return;
     if (e.pointerType === "touch") return this.touchDown(e);
     e.preventDefault();
-    this.els.host.setPointerCapture(e.pointerId);
+    this.capture(e.pointerId);
     if (e.pointerType === "pen") {
       this.penDown = true;
       this.touches.clear();
@@ -211,6 +211,15 @@ export class Surface {
     };
     this.invalidate();
   };
+
+  /** 포인터 캡처가 실패해도(이미 끝난 포인터 등) 필기는 계속한다 */
+  private capture(id: number) {
+    try {
+      this.els.host.setPointerCapture(id);
+    } catch {
+      /* 무시 */
+    }
+  }
 
   private pressure(e: PointerEvent) {
     if (e.pointerType !== "pen") return 0.5;
@@ -464,7 +473,7 @@ export class Surface {
   private touchDown(e: PointerEvent) {
     if (this.penDown || performance.now() < this.penQuietUntil || e.width > 44) return;
     this.touches.set(e.pointerId, { x: e.clientX, y: e.clientY, t: performance.now(), sx: e.clientX, sy: e.clientY });
-    this.els.host.setPointerCapture(e.pointerId);
+    this.capture(e.pointerId);
     if (this.touches.size === 2) {
       const [a, b] = [...this.touches.values()];
       this.pinch = { dist: Math.hypot(a.x - b.x, a.y - b.y), zoom: this.zoom, cx: (a.x + b.x) / 2, cy: (a.y + b.y) / 2 };
